@@ -1,0 +1,23 @@
+name: Smart Contract Audit
+on: [push, pull_request]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          pip install slither-analyzer pyvis
+      - name: Run Slither
+        run: slither contracts/ --checklist
+      - name: Setup Foundry
+        run: |
+          curl -L https://foundry.paradigm.xyz | bash
+          ~/.foundry/bin/foundryup
+      - name: Run Foundry tests
+        run: forge test -vvv
